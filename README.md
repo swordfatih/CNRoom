@@ -28,7 +28,7 @@ int main()
         //Enter in a room (optional)
         if(room.enter("players", true) != CNRoom::Invalid)
         {
-            //Open a drawer (optional)
+            //Open a drawer
             if(room.open("lebgdu92.txt", true) != CNRoom::Invalid)
             {
                 //Put files in the drawer
@@ -75,13 +75,23 @@ sword:L'Epee du Guerrier,false,4.850000,100
 
 ### Help
 
-`CNRoom/Room.hpp` file provides some useful tools. 
+Classes provided in `CNRoom/Room.hpp`. 
 
 Class | Description
 ------- | -----------
 `Key` | Struct that represents a key with a name and a vector of values.
 `Status` | Status codes that may be returned by some functions.
 `Room` | Main class for your database.
+
+These classes provides some useful functions.
+
+Functions | Description
+------- | -----------
+`Key::getValue(index)` | Convert a value to a string by its index.
+`Key::getValue(value)` | Convert a value to a string.
+`Room::connect(path)` | Set the base directory of all rooms and drawers. Current path by default. 
+`Room::enter(directory)` | Enter in a drawer, next functions .
+`Room::
 
 ***
 
