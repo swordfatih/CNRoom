@@ -95,6 +95,4 @@ Functions | Description
 `Room::take(name)` | Take a key from the drawer.
 `Room::read(name, index)` | Read a specific value of a key from the drawer.
 
-***
-
 
