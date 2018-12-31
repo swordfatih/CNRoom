@@ -30,9 +30,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 //Standard
-#include <fstream>
 #include <filesystem>
+#include <fstream>
+#include <vector>
 #include <variant>
+#include <string>
 
 namespace CNRoom
 {
