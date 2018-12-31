@@ -125,7 +125,8 @@ struct Key
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief Enumeration of the status of file actions
+/// \brief Enumeration of the status codes that may be
+/// returned by some functions.
 ///
 ////////////////////////////////////////////////////////////
 enum Status
