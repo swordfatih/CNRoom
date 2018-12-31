@@ -81,7 +81,7 @@ Class | Description
 ------- | -----------
 `Key` | Struct that represents a key with a name and a vector of values.
 `Status` | Status codes that may be returned by some functions.
-`remove<Component>(entity)` | Remove a component from an entity.
+`Room` | Main class for your database.
 
 ***
 
