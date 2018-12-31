@@ -80,13 +80,8 @@ sword:L'Epee du Guerrier,false,4.850000,100
 Class | Description
 ------- | -----------
 `Key` | Struct that represents a key with a name and a vector of values.
-`add<Component>(entity)` | Add a component to an entity.
+`Status` | Status codes that may be returned by some functions.
 `remove<Component>(entity)` | Remove a component from an entity.
-`get<Component>(entity)` | Get a specified component of an entity.
-`has<Component>(entity)` | Check if an entity has a specified component.
-`erase(entity)` | Erase an entity.
-`for_each<Component>(function)` | Execute a given function for each entities containing specified components.
-`acquire<Component>()` | Get a vector of entities containing specified components.
 
 ***
 
