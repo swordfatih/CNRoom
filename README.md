@@ -1,4 +1,4 @@
-# CNtity
+# CNRoom
 CNRoom (Chats Noirs Room) is a header-only key-value type database library using C++17 and `std::filesystem`. It is actually in development by Fatih#6810 (accfldekur@gmail.com) from *Moonlit Black Cats*.
 ***
 
@@ -75,11 +75,11 @@ sword:L'Epee du Guerrier,false,4.850000,100
 
 ### Help
 
-Many functions you need for your ECS are provided in the helper class. 
+`CNRoom/Room.hpp` file provides some useful tools. 
 
-Functions | Description
+Class | Description
 ------- | -----------
-`create<Component>()` | Creates an entity with or without components.
+`Key` | Struct that represents a key with a name and a vector of values.
 `add<Component>(entity)` | Add a component to an entity.
 `remove<Component>(entity)` | Remove a component from an entity.
 `get<Component>(entity)` | Get a specified component of an entity.
