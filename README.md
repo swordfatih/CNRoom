@@ -90,8 +90,10 @@ Functions | Description
 `Key::getValue(index)` | Convert a value to a string by its index.
 `Key::getValue(value)` | Convert a value to a string.
 `Room::connect(path)` | Set the base directory of all rooms and drawers. Current path by default. 
-`Room::enter(directory)` | Enter in a drawer, next functions .
-`Room::
+`Room::enter(directory)` | Enter in a drawer, must call this function to use next ones.
+`Room::put(key)` | Put (write) a key to a drawer.
+`Room::take(name)` | Take a key from the drawer.
+`Room::read(name, index)` | Read a specific value of a key from the drawer.
 
 ***
 
