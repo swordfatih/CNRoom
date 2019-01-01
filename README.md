@@ -98,6 +98,7 @@ Functions | Description
 `Key::getValue(value)` | Convert a value to a string.
 `Room::connect(path)` | Set the base directory of all rooms and drawers. Current path by default so optional. 
 `Room::enter(directory)` | Enter in a drawer, a sub directory, optional.
+`Room::destroy(file)` | Delete a file.
 `Room::open(file)` | Open a file, must call this function to use next ones.
 `Room::put(key)` | Put (write) a key to a drawer.
 `Room::take(name)` | Take a key from the drawer.
