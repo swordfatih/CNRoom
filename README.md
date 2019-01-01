@@ -48,8 +48,10 @@ int main()
 
                 for(const auto& it: sword.values)
                 {
-                    //Converting values to string and showing them
+                    //Convert values to string and show them
                     std::cout << sword.getValue(it) << ' ';
+                    //Or use std::visit
+                    std::visit([](auto const& value){ std::cout << value << ' '; }, it);
                 }
 
                 //Method 2: Read a value by index
