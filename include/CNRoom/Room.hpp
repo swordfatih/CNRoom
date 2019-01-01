@@ -241,6 +241,43 @@ public:
     }
 
     ////////////////////////////////////////////////////////////
+    /// \brief Destroy a drawer
+    ///
+    /// \param file Path to the file
+    ///
+    /// \return Status of the action
+    ///
+    ////////////////////////////////////////////////////////////
+    Status  destroy(const std::filesystem::path& file)
+    {
+        Status status = Status::None;
+
+        if(!mRoom.empty())
+        {
+            std::filesystem::current_path(mRoom);
+        }
+        else
+        {
+            std::filesystem::current_path(mBase);
+        }
+
+        if(std::filesystem::exists(file))
+        {
+            if(std::filesystem::is_regular_file(file))
+            {
+                std::filesystem::remove(file);
+                status = Status::Done;
+            }
+            else
+            {
+                status = Status::Invalid;
+            }
+        }
+
+        return status;
+    }
+
+    ////////////////////////////////////////////////////////////
     /// \brief Save a file which contains keys or create one
     ///
     /// \param file Path to the file
@@ -282,43 +319,6 @@ public:
             if(writer)
             {
                 mDrawer = std::filesystem::absolute(file);
-                status = Status::Done;
-            }
-            else
-            {
-                status = Status::Invalid;
-            }
-        }
-
-        return status;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destroy a drawer
-    ///
-    /// \param file Path to the file
-    ///
-    /// \return Status of the action
-    ///
-    ////////////////////////////////////////////////////////////
-    Status  destroy(const std::filesystem::path& file)
-    {
-        Status status = Status::None;
-
-        if(!mRoom.empty())
-        {
-            std::filesystem::current_path(mRoom);
-        }
-        else
-        {
-            std::filesystem::current_path(mBase);
-        }
-
-        if(std::filesystem::exists(file))
-        {
-            if(std::filesystem::is_regular_file(file))
-            {
-                std::filesystem::remove(file);
                 status = Status::Done;
             }
             else
