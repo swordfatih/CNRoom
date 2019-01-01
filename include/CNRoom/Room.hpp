@@ -431,7 +431,14 @@ public:
 
                 for(size_t i = 0; i < key.values.size(); ++i)
                 {
-                    writer << key.getValue(i);
+                    if(std::holds_alternative<std::string>(key.values[i]))
+                    {
+                        writer << '\"' << key.getValue(i) << '\"';
+                    }
+                    else
+                    {
+                        writer << key.getValue(i);
+                    }
 
                     if(i != key.values.size() - 1)
                     {
@@ -486,58 +493,29 @@ public:
 
                             if(token.empty())
                             {
-                                key.values.push_back(std::string(""));
+                                key.values.push_back(token);
                             }
                             else if(token == "true")
                             {
-                                key.values.push_back(true);
+                                key.values.push_back(bool(true));
                             }
                             else if(token == "false")
                             {
-                                key.values.push_back(false);
+                                key.values.push_back(bool(false));
+                            }
+                            else if(token.front() == '\"' && token.back() == '\"')
+                            {
+                                token.pop_back();
+                                token.erase(token.begin());
+                                key.values.push_back(token);
+                            }
+                            else if(token.find('.') != std::string::npos)
+                            {
+                                key.values.push_back(std::stod(token));
                             }
                             else
                             {
-                                bool digit = true;
-                                bool integer = true;
-
-                                if(token.front() != '.')
-                                {
-                                    for(const auto& character: token)
-                                    {
-                                        if(!std::isdigit(character))
-                                        {
-                                            if(character != '.')
-                                            {
-                                                digit = false;
-                                            }
-                                            else
-                                            {
-                                                integer = false;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    digit = false;
-                                }
-
-                                if(digit)
-                                {
-                                    if(integer)
-                                    {
-                                        key.values.push_back(std::stoi(token));
-                                    }
-                                    else
-                                    {
-                                        key.values.push_back(std::stod(token));
-                                    }
-                                }
-                                else
-                                {
-                                    key.values.push_back(token);
-                                }
+                                key.values.push_back(std::stoi(token));
                             }
 
                             if(pos != std::string::npos)
