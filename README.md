@@ -96,7 +96,8 @@ Functions | Description
 ------- | -----------
 `Key::getValue(index)` | Convert a value to a string by its index.
 `Key::getValue(value)` | Convert a value to a string.
-`Room::getDefaultPath()` | Returns the default current path of the application
+`Room::getDefaultPath()` | Returns the default current path of the application.
+`Room::defaultPath()` | Set current path to default.
 `Room::connect(path)` | Set the base directory of all rooms and drawers. Current path by default so optional. 
 `Room::enter(directory)` | Enter in a drawer, a sub directory, optional.
 `Room::destroy(file)` | Delete a file.
