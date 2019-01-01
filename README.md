@@ -86,7 +86,7 @@ Class | Description
 `Status` | Status codes that may be returned by some functions.
 `Room` | Main class for your database.
 
-These classes provides some useful functions.
+Different useful functions member of the classes above.
 
 Functions | Description
 ------- | -----------
