@@ -173,6 +173,15 @@ public:
     {
         return mPrime;
     }
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Set current path to default
+    ///
+    ////////////////////////////////////////////////////////////
+    void defaultPath() 
+    {
+        std::filesystem::current_path(mPrime);
+    }
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the base directory, current path by default
