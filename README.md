@@ -68,8 +68,7 @@ int main()
 }
 ```
 
-Created file's path: "database\players\lebgdu92.txt"
-Content:
+Created file's path: "database\players\lebgdu92.txt". Content:
 ```
 mail:lebgdu92@gmail.com,true
 sword:L'Epee du Guerrier,false,4.850000,100
