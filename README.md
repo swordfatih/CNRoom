@@ -103,7 +103,7 @@ Functions | Description
 `Room::exit()` | Exit the actual room, optional: you can directly enter another room.
 `Room::destroy(file)` | Delete a file.
 `Room::open(file)` | Open a file, must call this function to use next ones.
-`Room::close()` | Close the actual drawer, optional: you can directly open another file.
+`Room::close()` | Close the actual drawer, optional: you can directly open another drawer.
 `Room::put(key)` | Put (write) a key to a drawer.
 `Room::take(name)` | Take a key from the drawer.
 `Room::read(name, index)` | Read a specific value of a key from the drawer.
