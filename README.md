@@ -100,8 +100,10 @@ Functions | Description
 `Room::defaultPath()` | Set current path to default, to call before using `std::fstream`.
 `Room::connect(path)` | Set the base directory of all rooms and drawers. Current path by default so optional. 
 `Room::enter(directory)` | Enter in a drawer, a sub directory, optional.
+`Room::exit()` | Exit the actual room, optional: you can directly enter another room.
 `Room::destroy(file)` | Delete a file.
 `Room::open(file)` | Open a file, must call this function to use next ones.
+`Room::close()` | Close the actual drawer, optional: you can directly open another file.
 `Room::put(key)` | Put (write) a key to a drawer.
 `Room::take(name)` | Take a key from the drawer.
 `Room::read(name, index)` | Read a specific value of a key from the drawer.
