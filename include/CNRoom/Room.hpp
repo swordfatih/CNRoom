@@ -203,6 +203,12 @@ public:
             if(std::filesystem::is_directory(directory))
             {
                 mBase = std::filesystem::absolute(directory);
+
+                if(mRoom == mPrime)
+                {
+                    mRoom = mBase;
+                }
+
                 status = Status::Done;
             }
             else
