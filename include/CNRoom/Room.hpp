@@ -64,31 +64,31 @@ struct Key
     ////////////////////////////////////////////////////////////
     std::string getValue(const size_t& index) const
     {
-        std::string value;
+        std::string converted;
 
         if(index < values.size())
         {
-            auto& token = values[index];
+            auto& value = values[index];
 
-            if(std::holds_alternative<std::string>(token))
+            if(std::holds_alternative<std::string>(value))
             {
-                value = std::get<std::string>(token);
+                converted = std::get<std::string>(value);
             }
-            else if(std::holds_alternative<int>(token))
+            else if(std::holds_alternative<int>(value))
             {
-                value = std::to_string(std::get<int>(token));
+                converted = std::to_string(std::get<int>(value));
             }
-            else if(std::holds_alternative<double>(token))
+            else if(std::holds_alternative<double>(value))
             {
-                value = std::to_string(std::get<double>(token));
+                converted = std::to_string(std::get<double>(value));
             }
             else
             {
-                value = std::get<bool>(token) ? "true" : "false";
+                converted = std::get<bool>(value) ? "true" : "false";
             }
         }
 
-        return value;
+        return converted;
     }
 
     ////////////////////////////////////////////////////////////
@@ -101,26 +101,26 @@ struct Key
     ////////////////////////////////////////////////////////////
     std::string getValue(const Types& value) const
     {
-        std::string token;
+        std::string converted;
 
         if(std::holds_alternative<std::string>(value))
         {
-            token = std::get<std::string>(value);
+            converted = std::get<std::string>(value);
         }
         else if(std::holds_alternative<int>(value))
         {
-            token = std::to_string(std::get<int>(value));
+            converted = std::to_string(std::get<int>(value));
         }
         else if(std::holds_alternative<double>(value))
         {
-            token = std::to_string(std::get<double>(value));
+            converted = std::to_string(std::get<double>(value));
         }
         else
         {
-            token = std::get<bool>(value) ? "true" : "false";
+            converted = std::get<bool>(value) ? "true" : "false";
         }
 
-        return token;
+        return converted;
     }
 };
 
