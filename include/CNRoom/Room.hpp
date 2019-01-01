@@ -149,7 +149,7 @@ public:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-            Room(): mBase(std::filesystem::current_path()), mRoom(""), mDrawer("")
+            Room(): mPrime(std::filesystem::current_path()), mBase(std::filesystem::current_path()), mRoom(""), mDrawer("")
     {
         //ctor
     }
@@ -161,6 +161,17 @@ public:
             ~Room()
     {
         //dtor
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get default current path
+    ///
+    /// \return Default path
+    ///
+    ////////////////////////////////////////////////////////////
+    std::filesystem::path getDefaultPath() const
+    {
+        return mPrime;
     }
 
     ////////////////////////////////////////////////////////////
@@ -627,9 +638,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::filesystem::path   mBase;      ///< Path to the base directory
-    std::filesystem::path   mRoom;      ///< Path to the actual room
-    std::filesystem::path   mDrawer;    ///< Path to the opened drawer
+    const std::filesystem::path mPrime;     ///< Default path
+    std::filesystem::path       mBase;      ///< Path to the base directory
+    std::filesystem::path       mRoom;      ///< Path to the actual room
+    std::filesystem::path       mDrawer;    ///< Path to the opened drawer
 };
 
 } // namespace CNRoom
