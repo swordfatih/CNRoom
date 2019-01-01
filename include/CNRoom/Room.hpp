@@ -149,7 +149,7 @@ public:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-            Room(): mPrime(std::filesystem::current_path()), mBase(std::filesystem::current_path()), mRoom(""), mDrawer("")
+            Room(): mPrime(std::filesystem::current_path()), mBase(mPrime), mRoom(mPrime), mDrawer("")
     {
         //ctor
     }
@@ -173,12 +173,12 @@ public:
     {
         return mPrime;
     }
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Set current path to default
     ///
     ////////////////////////////////////////////////////////////
-    void defaultPath() 
+    void defaultPath()
     {
         std::filesystem::current_path(mPrime);
     }
@@ -261,6 +261,15 @@ public:
     }
 
     ////////////////////////////////////////////////////////////
+    /// \brief Exit the actual room
+    ///
+    ////////////////////////////////////////////////////////////
+    void exit()
+    {
+        mRoom = mBase;
+    }
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destroy a drawer
     ///
     /// \param file Path to the file
@@ -311,14 +320,7 @@ public:
     {
         Status status = Status::None;
 
-        if(!mRoom.empty())
-        {
-            std::filesystem::current_path(mRoom);
-        }
-        else
-        {
-            std::filesystem::current_path(mBase);
-        }
+        std::filesystem::current_path(mRoom);
 
         if(std::filesystem::exists(file))
         {
@@ -345,6 +347,25 @@ public:
             {
                 status = Status::Invalid;
             }
+        }
+
+        return status;
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Close the opened drawer
+    ///
+    /// \return Status of the action
+    ///
+    ////////////////////////////////////////////////////////////
+    Status close()
+    {
+        Status status = Status::None;
+
+        if(!mDrawer.empty())
+        {
+            mDrawer = mRoom;
+            status = Status::Done;
         }
 
         return status;
