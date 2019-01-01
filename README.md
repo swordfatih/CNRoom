@@ -23,7 +23,7 @@ An example code showing how CNRoom is easy to use!
 int main()
 {
     using namespace std::string_literals; //String literals (operator""s)
-    
+
     CNRoom::Room room;
 
     //Connect to a base directory (optional, current path by default)
@@ -33,7 +33,7 @@ int main()
         if(room.enter("players", true) != CNRoom::Invalid)
         {
             //Open a drawer
-            if(room.open("lebgdu92.txt", true) != CNRoom::Invalid)
+            if(room.open("lebgdu92", true) != CNRoom::Invalid)
             {
                 //Put files in the drawer
                 room.put({"mail", {"lebgdu92@gmail.com"s, true}});
@@ -50,18 +50,20 @@ int main()
                 {
                     //Convert values to string and show them
                     std::cout << sword.getValue(it) << ' ';
-                    //Or use std::visit
+                    //Converting values to string and showing them
                     std::visit([](auto const& value){ std::cout << value << ' '; }, it);
                 }
 
                 //Method 2: Read a value by index
                 auto&& mail = room.read("mail", 0); //Starting from 0
 
-                if(auto value = std::get_if<std::string>(&mail))
+                if(auto&& value = std::get_if<std::string>(&mail))
                 {
                     //Showing the value
                     std::cout << *value << std::endl;
                 }
+
+                room.destroy("lebgdu92");
             }
         }
     }
