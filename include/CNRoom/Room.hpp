@@ -263,10 +263,20 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Exit the actual room
     ///
+    /// \return Status of the action
+    ///
     ////////////////////////////////////////////////////////////
-    void exit()
+    Status exit()
     {
-        mRoom = mBase;
+        Status status = Status::None;
+
+        if(mRoom != mBase)
+        {
+            mRoom = mBase;
+            status = Status::Done;
+        }
+
+        return status;
     }
 
     ////////////////////////////////////////////////////////////
