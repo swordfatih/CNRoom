@@ -588,48 +588,19 @@ public:
                                 {
                                     value = false;
                                 }
+                                else if(token.front() == '\"' && token.back() == '\"')
+                                {
+                                    token.pop_back();
+                                    token.erase(token.begin());
+                                    value = token;
+                                }
+                                else if(token.find('.') != std::string::npos)
+                                {
+                                    value = std::stod(token);
+                                }
                                 else
                                 {
-                                    bool digit = true;
-                                    bool integer = true;
-
-                                    if(token.front() != '.')
-                                    {
-                                        for(const auto& character: token)
-                                        {
-                                            if(!std::isdigit(character))
-                                            {
-                                                if(character != '.')
-                                                {
-                                                    digit = false;
-                                                }
-                                                else
-                                                {
-                                                    integer = false;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        digit = false;
-                                    }
-
-                                    if(digit)
-                                    {
-                                        if(integer)
-                                        {
-                                            value = std::stoi(token);
-                                        }
-                                        else
-                                        {
-                                           value = std::stod(token);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        value = token;
-                                    }
+                                    value = std::stoi(token);
                                 }
 
                                 done = true;
