@@ -8,7 +8,7 @@ CNRoom is header-only, you just need a compiler that supports C++17 and `std::fi
 
 **Library vocabulary**
 
-I use the arrangement metaphor, you can imagine a corridor (base directory) with several rooms (directories), each rooms contains drawers (files), inside these drawers you can tidy up papers (keys) with informations written on (values). So you can enter in a room, open a drawer and take a paper to write on or to read.
+I use the arrangement metaphor, you can imagine a room (base directory) with several drawers (files), inside these drawers you can tidy up papers (keys) with informations written on (values). 
 
 **Example code**
 
@@ -82,25 +82,21 @@ Classes provided in `CNRoom/Room.hpp`.
 Class | Description
 ------- | -----------
 `Key` | Struct that represents a key with a name and a vector of values.
-`Status` | Status codes that may be returned by some functions.
-`Room` | Main class for your database.
+`Stream` | Stream class to operate files.
+`Room` | Stream wrapper class for your database.
 
 Different useful functions member of the classes above.
 
 Functions | Description
 ------- | -----------
-`Key::getValue(index)` | Convert a value to a string by its index.
-`Key::getValue(value)` | Convert a value to a string.
-`Room::getDefaultPath()` | Returns the default current path of the application.
-`Room::defaultPath()` | Set current path to default, to call before using `std::fstream`.
-`Room::connect(path)` | Set the base directory of all rooms and drawers. Current path by default so optional. 
-`Room::enter(directory)` | Enter in a drawer, a sub directory, optional.
-`Room::exit()` | Exit the actual room, optional: you can directly enter another room.
-`Room::destroy(file)` | Delete a file.
-`Room::open(file)` | Open a file, must call this function to use next ones.
-`Room::close()` | Close the actual drawer, optional: you can directly open another drawer.
-`Room::put(key)` | Put (write) a key to a drawer.
-`Room::take(name)` | Take a key from the drawer.
-`Room::read(name, index)` | Read a specific value of a key from the drawer.
+`Key::string(index)` | Convert a value to a string.
+`Stream::operator<<` | Write a key to the stream.
+`Stream::operator>>` | Read a key from the stream by its name.
+`Stream::operator()` | Returns a reference on the output key.
+`Stream::write(key)` | Write a key to the stream.
+`Stream::read(name)` | Read a key from the stream with its name.
+`Room::connect(path)` | Set the base directory of all drawers. Current path by default so optional. 
+`Room::open(file, function)` | Open a drawer and call an operation function.
+`Room::destroy(file)` | Delete a drawer.
 
 
