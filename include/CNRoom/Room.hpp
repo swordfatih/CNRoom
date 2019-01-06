@@ -389,8 +389,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief Class for a locker-room type database based on
-/// files
+/// \brief Stream wrapper class for a locker-room type
+/// database based on files
 ///
 ////////////////////////////////////////////////////////////
 class Room
