@@ -192,7 +192,7 @@ public:
     /// \return Internal key
     ///
     ////////////////////////////////////////////////////////////
-    const Key   operator ()() const
+    Key&        operator ()()
     {
         return mKey;
     }
@@ -454,10 +454,9 @@ public:
     /// \param function Operations
     /// \param create Create a new file if path doesn't point to
     /// any, false by default
-    /// \param exception Function to call when an exception occurs
     ///
     ////////////////////////////////////////////////////////////
-    void    open(const std::filesystem::path& file, std::function<void(Stream&)> function, bool create = false, std::function<void(const std::exception&)> exception = nullptr)
+    void    open(const std::filesystem::path& file, std::function<void(Stream&)> function, bool create = false)
     {
         bool done = true;
 
@@ -488,15 +487,8 @@ public:
         {
             if(std::filesystem::is_regular_file(mBase / file))
             {
-                try
-                {
-                    Stream stream({mBase / file});
-                    function(stream);
-                }
-                catch(const std::exception& e)
-                {
-                    exception(e);
-                }
+                Stream stream({mBase / file});
+                function(stream);
             }
             else
             {
