@@ -24,48 +24,44 @@ int main()
 {
     using namespace std::string_literals; //String literals (operator""s)
 
-    CNRoom::Room room;
-
-    //Connect to a base directory (optional, current path by default)
-    if(room.connect("database", true) != CNRoom::Invalid)
+    try
     {
-        //Enter in a room (optional)
-        if(room.enter("players", true) != CNRoom::Invalid)
+        CNRoom::Room room;
+
+        //Connect to a base directory (optional, current path by default)
+        room.connect("database", true);
+
+        //Open a drawer
+        room.open("lebgdu92.hkn", [](auto& stream)
         {
-            //Open a drawer
-            if(room.open("lebgdu92", true) != CNRoom::Invalid)
+            auto& key = stream();
+
+            //Write to the drawer
+            stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior"s, false, 4.85, 0}};
+
+            //Read from the drawer
+            stream >> "sword";
+
+            std::cout << std::boolalpha;
+
+            for(const auto& it: key.values)
             {
-                //Put files in the drawer
-                room.put({"mail", {"lebgdu92@gmail.com"s, true}});
-
-                CNRoom::Key sword{"sword", {"L'Epee du Guerrier"s, false, 4.85, 100}};
-                room.put(sword);
-
-                //Read files from the drawer
-
-                //Method 1: Take whole key
-                sword = room.take("sword");
-
-                for(const auto& it: sword.values)
-                {
-                    //Convert values to string and show them
-                    std::cout << sword.getValue(it) << ' ';
-                    //Converting values to string and showing them
-                    std::visit([](auto const& value){ std::cout << value << ' '; }, it);
-                }
-
-                //Method 2: Read a value by index
-                auto&& mail = room.read("mail", 0); //Starting from 0
-
-                if(auto&& value = std::get_if<std::string>(&mail))
-                {
-                    //Showing the value
-                    std::cout << *value << std::endl;
-                }
-
-                room.destroy("lebgdu92");
+                //Show with std::visit
+                std::visit([](auto const& value){ std::cout << value << ' '; }, it);
+                //Show by converting to string
+                std::cout << key.string(it) << ' ';
             }
-        }
+
+            //Show with get
+            std::cout << std::get<std::string>(key.values[0]) << std::endl;
+
+            //Remove a key in the drawer
+            stream.remove("sword");
+        }, true);
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
     }
 
     return 0;
