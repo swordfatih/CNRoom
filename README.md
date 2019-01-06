@@ -34,8 +34,6 @@ int main()
         //Open a drawer
         room.open("lebgdu92.hkn", [](auto& stream)
         {
-            auto& key = stream();
-
             //Write to the drawer
             stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior Sword of the Warrior"s, false, 4.85, 0}};
 
@@ -44,7 +42,7 @@ int main()
 
             std::cout << std::boolalpha;
 
-            for(const auto& it: key.values)
+            for(const auto& it: stream().values)
             {
                 //Show with std::visit
                 std::visit([](auto const& value){ std::cout << value << ' '; }, it);
@@ -53,7 +51,7 @@ int main()
             }
 
             //Show with get
-            std::cout << std::get<std::string>(key.values[0]) << std::endl;
+            std::cout << std::get<std::string>(stream().values[0]) << std::endl;
 
             //Remove a key in the drawer
             stream.remove("sword");
