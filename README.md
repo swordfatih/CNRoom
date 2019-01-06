@@ -37,7 +37,7 @@ int main()
             auto& key = stream();
 
             //Write to the drawer
-            stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior"s, false, 4.85, 0}};
+            stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior Sword of the Warrior"s, false, 4.85, 0}};
 
             //Read from the drawer
             stream >> "sword";
@@ -68,7 +68,13 @@ int main()
 }
 ```
 
-Created file's path: "database\players\lebgdu92.txt". Content:
+Output:
+```
+Sword of the Warrior Sword of the Warrior false false 4.85 4.850000 0 0 Sword of the Warrior
+```
+
+Created file's path: "database\lebgdu92.txt". 
+Content:
 ```
 mail:"lebgdu92@gmail.com",true
 ```
