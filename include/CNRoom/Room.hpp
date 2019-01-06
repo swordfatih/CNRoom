@@ -30,10 +30,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 //Standard
+#include <exception>
 #include <filesystem>
-#include <fstream>
+#include <functional>
 #include <vector>
 #include <variant>
+#include <fstream>
 #include <string>
 
 namespace CNRoom
@@ -55,43 +57,6 @@ struct Key
     std::vector<Types> values;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert value to string by index
-    ///
-    /// \param value Index of the to convert
-    ///
-    /// \return Converted value
-    ///
-    ////////////////////////////////////////////////////////////
-    std::string getValue(const size_t& index) const
-    {
-        std::string converted;
-
-        if(index < values.size())
-        {
-            auto& value = values[index];
-
-            if(std::holds_alternative<std::string>(value))
-            {
-                converted = std::get<std::string>(value);
-            }
-            else if(std::holds_alternative<int>(value))
-            {
-                converted = std::to_string(std::get<int>(value));
-            }
-            else if(std::holds_alternative<double>(value))
-            {
-                converted = std::to_string(std::get<double>(value));
-            }
-            else
-            {
-                converted = std::get<bool>(value) ? "true" : "false";
-            }
-        }
-
-        return converted;
-    }
-
-    ////////////////////////////////////////////////////////////
     /// \brief Convert value to string
     ///
     /// \param value Value to convert
@@ -99,7 +64,7 @@ struct Key
     /// \return Converted value
     ///
     ////////////////////////////////////////////////////////////
-    std::string getValue(const Types& value) const
+    std::string string(const Types& value) const
     {
         std::string converted;
 
@@ -125,16 +90,302 @@ struct Key
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief Enumeration of the status codes that may be
-/// returned by some functions.
+/// \brief Stream class to operate files
 ///
 ////////////////////////////////////////////////////////////
-enum Status
+class Stream
 {
-    Done,       ///< Successfully done
-    None,       ///< File doesn't exist
-    Invalid,    ///< Invalid path
-    Unset       ///< File not set
+public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct an empty stream
+    ///
+    ////////////////////////////////////////////////////////////
+                Stream() : mFile("")
+    {
+
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a stream ready to be operate on
+    ///
+    /// \param file Path to the file to operate
+    /// \param create Create new if file doesn't exist, false by
+    /// default
+    ///
+    ////////////////////////////////////////////////////////////
+                Stream(const std::filesystem::path& file, bool create = false) : mFile(file)
+    {
+        open(file, create);
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Default destructor
+    ///
+    ////////////////////////////////////////////////////////////
+                ~Stream()
+    {
+        //dtor
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Open a file to operate on
+    ///
+    /// \param file Path to the file to operate
+    /// \param create Create new if file doesn't exist, false by
+    /// default
+    ///
+    ////////////////////////////////////////////////////////////
+    void        open(const std::filesystem::path& file, bool create = false)
+    {
+        bool exists = true;
+
+        mFile = file;
+
+        if(!std::filesystem::exists(file))
+        {
+            if(create)
+            {
+                std::ofstream writer(file);
+                writer.close();
+            }
+            else
+            {
+                exists = false;
+                throw std::runtime_error("Path \"" + file.string() + "\" doesn't point to any file");
+            }
+        }
+
+        if(exists)
+        {
+            mStream.open(file);
+
+            if(!mStream)
+            {
+                throw std::runtime_error("Stream failed to open file on \"" + file.string() + "\"");
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////
+    /// Overload of operator << to write to the file
+    ///
+    ////////////////////////////////////////////////////////////
+    Stream&     operator <<(Key key)
+    {
+        write(key);
+        return *this;
+    }
+
+    ///////////////////////////////////////////////////////////
+    /// Overload of operator >> to read from a file
+    ///
+    ////////////////////////////////////////////////////////////
+    Stream&     operator >>(const std::string& name)
+    {
+        mKey = read(name);
+        return *this;
+    }
+
+    ///////////////////////////////////////////////////////////
+    /// Overload of operator >> to access internal key
+    ///
+    /// \return Internal key
+    ///
+    ////////////////////////////////////////////////////////////
+    const Key   operator ()() const
+    {
+        return mKey;
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Write a key to the stream
+    ///
+    /// \param key Key to write
+    ///
+    ////////////////////////////////////////////////////////////
+    void        write(const Key& key)
+    {
+        if(mStream)
+        {
+            mStream.seekg(0, mStream.beg);
+
+            std::vector<std::string> fields;
+
+            std::string field;
+            while(std::getline(mStream, field))
+            {
+                auto pos = field.find_first_of(':');
+
+                if(key.name != field.substr(0, pos))
+                {
+                    fields.push_back(field);
+                }
+            }
+
+            mStream.close();
+
+            std::filesystem::resize_file(mFile, 0);
+
+            mStream.open(mFile);
+
+            for(const auto& it: fields)
+            {
+                mStream << it << '\n';
+            }
+
+            mStream << key.name << ':';
+
+            for(size_t i = 0; i < key.values.size(); ++i)
+            {
+                std::holds_alternative<std::string>(key.values[i]) ? mStream << '\"' << key.string(key.values[i]) << '\"' : mStream << key.string(key.values[i]);
+
+                if(i != key.values.size() - 1)
+                {
+                    mStream << ',';
+                }
+            }
+
+            mStream.clear();
+        }
+        else
+        {
+            throw std::runtime_error("Could not write, stream failed");
+        }
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Read a key from the stream
+    ///
+    /// \param name Name of the key to read
+    ///
+    /// \return Key
+    ///
+    ////////////////////////////////////////////////////////////
+    Key     read(const std::string& name)
+    {
+        Key key{name, {}};
+
+        if(mStream)
+        {
+            mStream.seekg(0, mStream.beg);
+
+            std::string field;
+
+            bool done = false;
+            while(std::getline(mStream, field) && !done)
+            {
+                if(name == field.substr(0, field.find_first_of(':')))
+                {
+                    std::string values = field.substr(field.find_first_of(':') + 1);
+
+                    size_t last = 0;
+                    while(!done)
+                    {
+                        auto pos = values.find_first_of(',', last);
+
+                        std::string token = values.substr(last, pos - last);
+
+                        if(token.empty())
+                        {
+                            key.values.push_back(token);
+                        }
+                        else if(token == "true")
+                        {
+                            key.values.push_back(bool(true));
+                        }
+                        else if(token == "false")
+                        {
+                            key.values.push_back(bool(false));
+                        }
+                        else if(token.front() == '\"' && token.back() == '\"')
+                        {
+                            token.pop_back();
+                            token.erase(token.begin());
+
+                            key.values.push_back(token);
+                        }
+                        else if(token.find('.') != std::string::npos)
+                        {
+                            key.values.push_back(std::stod(token));
+                        }
+                        else
+                        {
+                            key.values.push_back(std::stoi(token));
+                        }
+
+                        if(pos != std::string::npos)
+                        {
+                            last = pos + 1;
+                        }
+                        else
+                        {
+                            done = true;
+                        }
+                    }
+                }
+            }
+
+            mStream.clear();
+        }
+        else
+        {
+            throw std::runtime_error("Could not read, stream failed");
+        }
+
+        return key;
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Remove a key in the stream
+    ///
+    /// \param name Name of the key to delete
+    ///
+    ////////////////////////////////////////////////////////////
+    void  remove(const std::string& name)
+    {
+        if(mStream)
+        {
+            mStream.seekg(0, mStream.beg);
+
+            std::vector<std::string> fields;
+
+            std::string field;
+            while(std::getline(mStream, field))
+            {
+                auto pos = field.find_first_of(':');
+
+                if(name != field.substr(0, pos))
+                {
+                    fields.push_back(field);
+                }
+            }
+
+            mStream.close();
+
+            std::filesystem::resize_file(mFile, 0);
+
+            mStream.open(mFile);
+
+            for(const auto& it: fields)
+            {
+                mStream << it << '\n';
+            }
+
+            mStream.clear();
+        }
+        else
+        {
+            throw std::runtime_error("Could not remove, stream failed");
+        }
+    }
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    std::fstream            mStream;    ///< Stream
+    std::filesystem::path   mFile;      ///< Path to the file to operate
+    Key                     mKey;       ///< Key
 };
 
 ////////////////////////////////////////////////////////////
@@ -149,7 +400,7 @@ public:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-            Room(): mPrime(std::filesystem::current_path()), mBase(mPrime), mRoom(mPrime), mDrawer("")
+            Room() : mBase(std::filesystem::current_path())
     {
         //ctor
     }
@@ -164,56 +415,24 @@ public:
     }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get default current path
-    ///
-    /// \return Default path
-    ///
-    ////////////////////////////////////////////////////////////
-    std::filesystem::path getDefaultPath() const
-    {
-        return mPrime;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set current path to default
-    ///
-    ////////////////////////////////////////////////////////////
-    void defaultPath()
-    {
-        std::filesystem::current_path(mPrime);
-    }
-
-    ////////////////////////////////////////////////////////////
     /// \brief Set the base directory, current path by default
     ///
-    /// \param directory Path to the directory, current path by
-    /// default
+    /// \param directory Path to the directory
     /// \param create If true and directory doesn't exist create
     /// a new one, false by default
     ///
-    /// \return Status of the action
-    ///
     ////////////////////////////////////////////////////////////
-    Status  connect(const std::filesystem::path& directory = std::filesystem::current_path(), bool create = false)
+    void    connect(const std::filesystem::path& directory, bool create = false)
     {
-        Status status = Status::None;
-
         if(std::filesystem::exists(directory))
         {
             if(std::filesystem::is_directory(directory))
             {
                 mBase = std::filesystem::absolute(directory);
-
-                if(mRoom == mPrime)
-                {
-                    mRoom = mBase;
-                }
-
-                status = Status::Done;
             }
             else
             {
-                status = Status::Invalid;
+                throw std::runtime_error("Invalid path, must be a directory.");
             }
         }
         else if(create)
@@ -221,410 +440,87 @@ public:
             std::filesystem::create_directories(directory);
 
             mBase = std::filesystem::absolute(directory);
-            status = Status::Done;
-        }
-
-        return status;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Save a directory which contains files or create one
-    ///
-    /// \param directory Path to the directory
-    /// \param create If true and directory doesn't exist create
-    /// a new one, false by default
-    ///
-    /// \return Status of the action
-    ///
-    ////////////////////////////////////////////////////////////
-    Status  enter(const std::filesystem::path& directory, bool create = false)
-    {
-        Status status = Status::None;
-
-        std::filesystem::current_path(mBase);
-
-        if(std::filesystem::exists(directory))
-        {
-            if(std::filesystem::is_directory(directory))
-            {
-                mRoom = std::filesystem::absolute(directory);
-                status = Status::Done;
-            }
-            else
-            {
-                status = Status::Invalid;
-            }
-        }
-        else if(create)
-        {
-            std::filesystem::create_directories(directory);
-
-            mRoom = std::filesystem::absolute(directory);
-            status = Status::Done;
-        }
-
-        return status;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Exit the actual room
-    ///
-    /// \return Status of the action
-    ///
-    ////////////////////////////////////////////////////////////
-    Status exit()
-    {
-        Status status = Status::None;
-
-        if(mRoom != mBase)
-        {
-            mRoom = mBase;
-            status = Status::Done;
-        }
-
-        return status;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destroy a drawer
-    ///
-    /// \param file Path to the file
-    ///
-    /// \return Status of the action
-    ///
-    ////////////////////////////////////////////////////////////
-    Status  destroy(const std::filesystem::path& file)
-    {
-        Status status = Status::None;
-
-        if(!mRoom.empty())
-        {
-            std::filesystem::current_path(mRoom);
         }
         else
         {
-            std::filesystem::current_path(mBase);
+            throw std::runtime_error("Path \"" + directory.string() + "\" doesn't point to any file");
         }
-
-        if(std::filesystem::exists(file))
-        {
-            if(std::filesystem::is_regular_file(file))
-            {
-                std::filesystem::remove(file);
-                status = Status::Done;
-            }
-            else
-            {
-                status = Status::Invalid;
-            }
-        }
-
-        return status;
     }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Save a file which contains keys or create one
+    /// \brief Open a drawer which contains keys to operate on
     ///
     /// \param file Path to the file
-    /// \param create If true and file doesn't exist create a new
-    /// one, false by default
-    ///
-    /// \return Status of the action
+    /// \param function Operations
+    /// \param create Create a new file if path doesn't point to
+    /// any, false by default
+    /// \param exception Function to call when an exception occurs
     ///
     ////////////////////////////////////////////////////////////
-    Status  open(const std::filesystem::path& file, bool create = false)
+    void    open(const std::filesystem::path& file, std::function<void(Stream&)> function, bool create = false, std::function<void(const std::exception&)> exception = nullptr)
     {
-        Status status = Status::None;
+        bool done = true;
 
-        std::filesystem::current_path(mRoom);
-
-        if(std::filesystem::exists(file))
+        if(!std::filesystem::exists(mBase / file))
         {
-            if(std::filesystem::is_regular_file(file))
+            if(create)
             {
-                mDrawer = std::filesystem::absolute(file);
-                status = Status::Done;
+                std::ofstream writer(mBase / file);
+
+                if(writer)
+                {
+                    writer.close();
+                }
+                else
+                {
+                    done = false;
+                    throw std::runtime_error("Stream failed to open file on \"" + file.string() + "\"");
+                }
             }
             else
             {
-                status = Status::Invalid;
+                done = false;
+                throw std::runtime_error("Path \"" + file.string() + "\" doesn't point to any file");
             }
         }
-        else if(create)
-        {
-            std::ofstream writer(file);
 
-            if(writer)
+        if(done)
+        {
+            if(std::filesystem::is_regular_file(mBase / file))
             {
-                mDrawer = std::filesystem::absolute(file);
-                status = Status::Done;
+                try
+                {
+                    Stream stream({mBase / file});
+                    function(stream);
+                }
+                catch(const std::exception& e)
+                {
+                    exception(e);
+                }
             }
             else
             {
-                status = Status::Invalid;
+                throw std::runtime_error("Invalid path \"" + file.string() + "\", must be a regular file");
             }
         }
-
-        return status;
     }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Close the opened drawer
+    /// \brief Destroy a file or directory
     ///
-    /// \return Status of the action
+    /// \param file Path to the file
     ///
     ////////////////////////////////////////////////////////////
-    Status close()
+    void    destroy(const std::filesystem::path& file)
     {
-        Status status = Status::None;
-
-        if(!mDrawer.empty())
+        if(std::filesystem::exists(mBase / file))
         {
-            mDrawer = mRoom;
-            status = Status::Done;
+            std::filesystem::remove_all(file);
         }
-
-        return status;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Put a key to the opened drawer
-    ///
-    /// \param key Key to write
-    ///
-    /// \return Status of the action
-    ///
-    ////////////////////////////////////////////////////////////
-    Status  put(const Key& key)
-    {
-        Status status = Status::Invalid;
-
-        if(std::filesystem::exists(mDrawer))
+        else
         {
-            std::ifstream observer(mDrawer);
-
-            if(observer)
-            {
-                std::vector<std::string> fields;
-
-                std::string field;
-                while(std::getline(observer, field))
-                {
-                    auto pos = field.find_first_of(':');
-
-                    if(key.name != field.substr(0, pos))
-                    {
-                        fields.push_back(field);
-                    }
-                }
-
-                observer.close();
-
-                std::ofstream writer(mDrawer, std::ios_base::trunc);
-
-                for(const auto& it: fields)
-                {
-                    writer << it << '\n';
-                }
-
-                writer << key.name << ':';
-
-                for(size_t i = 0; i < key.values.size(); ++i)
-                {
-                    if(std::holds_alternative<std::string>(key.values[i]))
-                    {
-                        writer << '\"' << key.getValue(i) << '\"';
-                    }
-                    else
-                    {
-                        writer << key.getValue(i);
-                    }
-
-                    if(i != key.values.size() - 1)
-                    {
-                        writer << ',';
-                    }
-                }
-
-                status = Status::Done;
-            }
-            else
-            {
-                status = Status::Invalid;
-            }
+            throw std::runtime_error("Path \"" + file.string() + "\" doesn't point to any file");
         }
-
-        return status;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Take a key from the opened drawer
-    ///
-    /// \param name Name of the key to read
-    ///
-    /// \return Key to read
-    ///
-    ////////////////////////////////////////////////////////////
-    Key     take(const std::string& name)
-    {
-        Key key{name, {}};
-
-        if(std::filesystem::exists(mDrawer))
-        {
-            std::ifstream observer(mDrawer);
-
-            if(observer)
-            {
-                std::string field;
-
-                bool done = false;
-                while(std::getline(observer, field) && !done)
-                {
-                    if(name == field.substr(0, field.find_first_of(':')))
-                    {
-                        std::string values = field.substr(field.find_first_of(':') + 1);
-
-                        size_t last = 0;
-                        while(!done)
-                        {
-                            auto pos = values.find_first_of(',', last);
-
-                            std::string token = values.substr(last, pos - last);
-
-                            if(token.empty())
-                            {
-                                key.values.push_back(token);
-                            }
-                            else if(token == "true")
-                            {
-                                key.values.push_back(bool(true));
-                            }
-                            else if(token == "false")
-                            {
-                                key.values.push_back(bool(false));
-                            }
-                            else if(token.front() == '\"' && token.back() == '\"')
-                            {
-                                token.pop_back();
-                                token.erase(token.begin());
-                                key.values.push_back(token);
-                            }
-                            else if(token.find('.') != std::string::npos)
-                            {
-                                key.values.push_back(std::stod(token));
-                            }
-                            else
-                            {
-                                key.values.push_back(std::stoi(token));
-                            }
-
-                            if(pos != std::string::npos)
-                            {
-                                last = pos + 1;
-                            }
-                            else
-                            {
-                                done = true;
-                            }
-                        }
-                    }
-                }
-
-                observer.close();
-            }
-        }
-
-        return key;
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Read a value of a key from the opened drawer
-    ///
-    /// \param name Name of the key to read
-    /// \param index Index of the value to read
-    ///
-    /// \return Value of the index
-    ///
-    ////////////////////////////////////////////////////////////
-    Types   read(const std::string& name, const size_t& index = 0)
-    {
-        Types value = std::string("");
-
-        if(std::filesystem::exists(mDrawer))
-        {
-            std::ifstream observer(mDrawer);
-
-            if(observer)
-            {
-                std::string field;
-
-                bool done = false;
-                while(std::getline(observer, field) && !done)
-                {
-                    if(name == field.substr(0, field.find_first_of(':')))
-                    {
-                        std::string values = field.substr(field.find_first_of(':') + 1);
-
-                        unsigned int lap = 0;
-
-                        size_t last = 0;
-                        while(!done)
-                        {
-                            auto pos = values.find_first_of(',', last);
-
-                            std::string token = values.substr(last, pos - last);
-
-                            if(lap == index)
-                            {
-                                if(token.empty())
-                                {
-                                    value = std::string("");
-                                }
-                                else if(token == "true")
-                                {
-                                    value = true;
-                                }
-                                else if(token == "false")
-                                {
-                                    value = false;
-                                }
-                                else if(token.front() == '\"' && token.back() == '\"')
-                                {
-                                    token.pop_back();
-                                    token.erase(token.begin());
-                                    value = token;
-                                }
-                                else if(token.find('.') != std::string::npos)
-                                {
-                                    value = std::stod(token);
-                                }
-                                else
-                                {
-                                    value = std::stoi(token);
-                                }
-
-                                done = true;
-                            }
-
-                            if(pos != std::string::npos)
-                            {
-                                last = pos + 1;
-                            }
-                            else
-                            {
-                                done = true;
-                            }
-
-                            lap++;
-                        }
-                    }
-                }
-
-                observer.close();
-            }
-        }
-
-        return value;
     }
 
 protected:
@@ -633,10 +529,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const std::filesystem::path mPrime;     ///< Default path
-    std::filesystem::path       mBase;      ///< Path to the base directory
-    std::filesystem::path       mRoom;      ///< Path to the actual room
-    std::filesystem::path       mDrawer;    ///< Path to the opened drawer
+    std::filesystem::path   mBase;  ///< Path to the base directory
 };
 
 } // namespace CNRoom
