@@ -35,7 +35,7 @@ int main()
         room.open("lebgdu92.hkn", [](auto& stream)
         {
             //Write to the drawer
-            stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior Sword of the Warrior"s, false, 4.85, 0}};
+            stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior"s, false, 4.85, 0}};
 
             //Read from the drawer
             stream >> "sword";
@@ -47,7 +47,7 @@ int main()
                 //Show with std::visit
                 std::visit([](auto const& value){ std::cout << value << ' '; }, it);
                 //Show by converting to string
-                std::cout << key.string(it) << ' ';
+                std::cout << stream().string(it) << ' ';
             }
 
             //Show with get
