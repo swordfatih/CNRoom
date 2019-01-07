@@ -1,10 +1,10 @@
 # CNRoom 1.1
-CNRoom (Chats Noirs Room) is a header-only key-value type database library using C++17 and `std::filesystem`. It is actually in development by Fatih#6810 (accfldekur@gmail.com) from *Moonlit Black Cats*.
+CNRoom (Chats Noirs Room) is a header-only key-value type database library using C++17 (`std::filesystem` and `std::variant`). It is actually in development by Fatih#6810 (accfldekur@gmail.com) from *Moonlit Black Cats*.
 ***
 
 ### How to use
 
-CNRoom is header-only, you just need a compiler that supports C++17 and `std::filesystem` and to include `CNRoom/Room.hpp` after downloading files in the include directory. You may also need to link `libstdc++fs` to your project to use the `std::filesystem` library that CNRoom depends on.
+CNRoom is header-only, you just need a compiler that supports C++17 (`std::filesystem` and `std::variant`) and to include `CNRoom/Room.hpp` after downloading files in the include directory. You may also need to link `libstdc++fs` to your project in order to use the `std::filesystem` library that CNRoom uses.
 
 **Library vocabulary**
 
