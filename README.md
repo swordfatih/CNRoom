@@ -55,7 +55,7 @@ int main()
     room.destroy("lebgdu92.hkn"); ///< Delete a file
 
     ////////////////////////////////////////////////////////////
-    /// Shortcut functions
+    /// Helper functions
     ////////////////////////////////////////////////////////////
     room.quick_write("lebgdu92.hkn", {"sword", {"Sword of the Warrior"s, false, 4.85, 0}}); ///< Write shortcut
     auto key = room.quick_read("lebgdu92.hkn", "sword"); ///< Read shortcut
