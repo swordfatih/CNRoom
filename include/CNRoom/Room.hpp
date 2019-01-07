@@ -511,6 +511,40 @@ public:
         }
     }
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Short way to retrieve a key in a drawer
+    ///
+    /// \param file Path to the file, must exist
+    /// \param name Name of the key
+    ///
+    ////////////////////////////////////////////////////////////
+    Key     quick_key(const std::filesystem::path& file, const std::string& name)
+    {
+        Stream stream(file);
+
+        stream >> name;
+
+        return stream();
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Short way to retrieve a value from a key in a
+    /// drawer with its index
+    ///
+    /// \param file Path to the file, must exist
+    /// \param name Name of the key holding the value
+    /// \param index Index of the value to retrieve
+    ///
+    ////////////////////////////////////////////////////////////
+    Types   quick_value(const std::filesystem::path& file, const std::string& name, const size_t& index = 0)
+    {
+        Stream stream(file);
+
+        stream >> name;
+
+        return stream().values[index];
+    }
+
 protected:
 
 private:
