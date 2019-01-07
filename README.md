@@ -77,29 +77,36 @@ Sword of the Warrior 0 4.85 0 4.850000
 
 ### Help
 
-Classes provided in `CNRoom/Room.hpp`. 
+Struct and classes provided in `CNRoom/Room.hpp`. 
 
-Class | Description
+Struct & members | Description
 ------- | -----------
 `Key` | Struct that represents a key with a name and a vector of values.
-`Stream` | Stream class to operate files.
-`Room` | Stream wrapper class for your database.
-
-Different useful functions member of the classes above.
-
-Functions | Description
-------- | -----------
+`Key::name` | Name of the key.
+`Key::values` | Vector of variant<string, int, double, bool>, you can access values with std::get, std::get_if, std::visit.
 `Key::string(index)` | Convert a value to a string.
+
+Class & members | Description
+------- | -----------
+`Stream` | Stream class to operate on files.
 `Stream::operator<<` | Write a key to the stream.
 `Stream::operator>>` | Read a key from the stream by its name.
 `Stream::operator()` | Returns a reference on the output key.
 `Stream::write(key)` | Write a key to the stream.
 `Stream::read(name)` | Read a key from the stream with its name.
+
+Some helper functions are provided in the Room class.
+
+Class & members | Description
+------- | -----------
+`Room` | Stream wrapper class for your database.
 `Room::connect(path)` | Set the base directory of all drawers. Current path by default so optional. 
 `Room::open(file, function)` | Open a drawer and call an operation function.
 `Room::destroy(file)` | Delete a drawer.
 `Room::quick_write(file, key)` | Helper function, short way to write a key in a drawer.
 `Room::quick_read(file, name)` | Helper function, short way to read a key from a drawer.
 `Room::quick_value(file, name, index)` | Helper function, short way to retrieve a value of a key from a drawer.
+
+
 
 
