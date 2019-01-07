@@ -71,7 +71,8 @@ Output:
 Sword of the Warrior Sword of the Warrior false false 4.85 4.850000 0 0 Sword of the Warrior
 ```
 
-Created file's path: "database\lebgdu92.txt". 
+Created file: "database\lebgdu92.txt". 
+
 Content:
 ```
 mail:"lebgdu92@gmail.com",true
