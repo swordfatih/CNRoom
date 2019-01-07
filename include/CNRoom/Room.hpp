@@ -224,9 +224,7 @@ public:
 
             mStream.close();
 
-            std::filesystem::resize_file(mFile, 0);
-
-            mStream.open(mFile);
+            mStream.open(mFile, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
 
             for(const auto& it: fields)
             {
@@ -362,9 +360,7 @@ public:
 
             mStream.close();
 
-            std::filesystem::resize_file(mFile, 0);
-
-            mStream.open(mFile);
+            mStream.open(mFile, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
 
             for(const auto& it: fields)
             {
