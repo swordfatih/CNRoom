@@ -103,7 +103,8 @@ Functions | Description
 `Room::connect(path)` | Set the base directory of all drawers. Current path by default so optional. 
 `Room::open(file, function)` | Open a drawer and call an operation function.
 `Room::destroy(file)` | Delete a drawer.
-`Room::quick_key(file, name)` | Helper function, short way to retrieve a key from a drawer.
+`Room::quick_write(file, key)` | Helper function, short way to write a key in a drawer.
+`Room::quick_read(file, name)` | Helper function, short way to read a key from a drawer.
 `Room::quick_value(file, name, index)` | Helper function, short way to retrieve a value of a key from a drawer.
 
 
