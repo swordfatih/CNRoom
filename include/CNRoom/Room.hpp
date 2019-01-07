@@ -514,13 +514,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Short way to write a key in a drawer
     ///
-    /// \param file Path to the file, must exist
+    /// \param file Path to the file
     /// \param key Key to write
+    /// \param create Create a new file if path doesn't point to
+    /// any, false by default
     ///
     ////////////////////////////////////////////////////////////
-    void    quick_write(const std::filesystem::path& file, const Key& key)
+    void    quick_write(const std::filesystem::path& file, const Key& key, bool create = false)
     {
-        Stream stream(mBase / file);
+        Stream stream(mBase / file, create);
 
         stream << key;
     }
