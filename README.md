@@ -12,7 +12,7 @@ I use the arrangement metaphor, you can imagine a room (base directory) with sev
 
 **Example code**
 
-An example code showing how CNRoom is easy to use!
+An example/tutorial code showing how CNRoom is easy to use!
 ```cpp
 //CNRoom
 #include "CNRoom/Room.hpp"
