@@ -520,7 +520,7 @@ public:
     ////////////////////////////////////////////////////////////
     Key     quick_key(const std::filesystem::path& file, const std::string& name)
     {
-        Stream stream(file);
+        Stream stream(mBase / file);
 
         stream >> name;
 
@@ -538,7 +538,7 @@ public:
     ////////////////////////////////////////////////////////////
     Types   quick_value(const std::filesystem::path& file, const std::string& name, const size_t& index = 0)
     {
-        Stream stream(file);
+        Stream stream(mBase / file);
 
         stream >> name;
 
