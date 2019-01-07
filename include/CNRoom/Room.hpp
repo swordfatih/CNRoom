@@ -512,13 +512,27 @@ public:
     }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Short way to retrieve a key in a drawer
+    /// \brief Short way to write a key in a drawer
+    ///
+    /// \param file Path to the file, must exist
+    /// \param key Key to write
+    ///
+    ////////////////////////////////////////////////////////////
+    void    quick_write(const std::filesystem::path& file, const Key& key)
+    {
+        Stream stream(mBase / file);
+
+        stream << key;
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Short way to read a key from a drawer
     ///
     /// \param file Path to the file, must exist
     /// \param name Name of the key
     ///
     ////////////////////////////////////////////////////////////
-    Key     quick_key(const std::filesystem::path& file, const std::string& name)
+    Key     quick_read(const std::filesystem::path& file, const std::string& name)
     {
         Stream stream(mBase / file);
 
