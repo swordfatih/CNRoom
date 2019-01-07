@@ -22,45 +22,45 @@ An example code showing how CNRoom is easy to use!
 
 int main()
 {
-    using namespace std::string_literals; //String literals (operator""s)
+    using namespace std::string_literals; ///< String literals (operator""s)
 
-    try
+    ////////////////////////////////////////////////////////////
+    /// Stream class
+    ////////////////////////////////////////////////////////////
+    CNRoom::Stream stream("database/lebgdu92.hkn", true); ///< Open the file pointed by the path, create new if doesn't exist
+
+    stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}}; ///< Write to the stream with operator<<
+    stream >> "mail"; ///< Read from the stream with operator>>
+    std::cout << std::get<std::string>(stream().values[0]) << std::endl; ///< Retreive key with Stream::operator() and std::get
+    stream.remove("mail"); ///< Remove a key
+
+    ////////////////////////////////////////////////////////////
+    /// Room helper class
+    ////////////////////////////////////////////////////////////
+    CNRoom::Room room;
+
+    room.connect("database", true); ///< Set a base directory (optional, current path by default)
+
+    room.open("lebgdu92.hkn", [](auto& stream) ///< Open a file
     {
-        CNRoom::Room room;
+        stream.write(CNRoom::Key{"sword", {"Sword of the Warrior"s, false, 4.85, 0}}); ///< Write to the stream with function
 
-        //Connect to a base directory (optional, current path by default)
-        room.connect("database", true);
-
-        //Open a drawer
-        room.open("lebgdu92.hkn", [](auto& stream)
+        for(const auto& it: stream.read("sword").values) ///< Read from the stream with function
         {
-            //Write to the drawer
-            stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}} << CNRoom::Key{"sword", {"Sword of the Warrior"s, false, 4.85, 0}};
+            std::visit([](auto const& value){ std::cout << value << ' '; }, it); ///< Visit the values to show them
+        }
 
-            //Read from the drawer
-            stream >> "sword";
+    }, true);
 
-            std::cout << std::boolalpha;
+    room.destroy("lebgdu92.hkn"); ///< Delete a file
 
-            for(const auto& it: stream().values)
-            {
-                //Show with std::visit
-                std::visit([](auto const& value){ std::cout << value << ' '; }, it);
-                //Show by converting to string
-                std::cout << stream().string(it) << ' ';
-            }
-
-            //Show with get
-            std::cout << std::get<std::string>(stream().values[0]) << std::endl;
-
-            //Remove a key in the drawer
-            stream.remove("sword");
-        }, true);
-    }
-    catch(const std::exception& e)
-    {
-        std::cout << e.what() << std::endl;
-    }
+    ////////////////////////////////////////////////////////////
+    /// Shortcut functions
+    ////////////////////////////////////////////////////////////
+    room.quick_write("lebgdu92.hkn", {"sword", {"Sword of the Warrior"s, false, 4.85, 0}}); ///< Write shortcut
+    auto key = room.quick_read("lebgdu92.hkn", "sword"); ///< Read shortcut
+    std::cout << key.string(key.values[2]) << std::endl; ///< Convert value to string
+    std::cout << std::get<bool>(room.quick_value("lebgdu92.hkn", "sword", 1)) << std::endl; ///< Retreive value shortcut
 
     return 0;
 }
