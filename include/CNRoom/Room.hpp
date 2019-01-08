@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 //
-// CNRoom - Chats Noirs Locker-room database
+// CNRoom - Chats Noirs Room
 // Copyright (c) 2019 Fatih (accfldekur@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied
