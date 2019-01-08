@@ -15,7 +15,7 @@ CNRoom lets you assign several values of different types (`std::string`, `int`, 
 
 **Example code**
 
-A tutorial example code showing how CNRoom is easy to use!
+A tutorial example code showing how easy CNRoom is to use!
 ```cpp
 //CNRoom
 #include "CNRoom/Room.hpp"
