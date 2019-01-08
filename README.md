@@ -71,7 +71,6 @@ Output:
 ```
 lebgdu92@gmail.com
 Sword of the Warrior 0 4.85 0 4.850000
-0
 ```
 
 ***
