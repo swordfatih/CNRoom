@@ -109,6 +109,8 @@ Class & members | Description
 `Room::quick_write(file, key)` | Short way to write a key.
 `Room::quick_read(file, name)` | Short way to read a key.
 
+**Performances**
 
+Can write and read keys of 5 values in a rate of 100 keys per second on my poor Toshiba DT01ACA100.
 
 
