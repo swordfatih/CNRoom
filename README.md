@@ -1,18 +1,21 @@
 # CNRoom 1.1
-CNRoom (Chats Noirs Room) is a header-only key-value type database library using C++17 (`std::filesystem` and `std::variant`). It is actually in development by Fatih#6810 (accfldekur@gmail.com) from *Moonlit Black Cats*.
+CNRoom (Chats Noirs Room) is a header-only key-value database library using C++17 (`std::filesystem` and `std::variant`) and based on local files. It is actually in development by Fatih#6810 (accfldekur@gmail.com) from *Moonlit Black Cats*.
 ***
 
 ### How to use
 
-CNRoom is header-only, you just need a compiler that supports C++17 (`std::filesystem` and `std::variant`) and to include `CNRoom/Room.hpp` after downloading files in the include directory. You may also need to link `libstdc++fs` to your project in order to use the `std::filesystem` library that CNRoom uses.
+**Installation**
+
+CNRoom is header-only, you just need a compiler that supports C++17 (`std::filesystem` and `std::variant`) then to include `CNRoom/Room.hpp` after downloading files in the include directory. You may also need to link `libstdc++fs` to your project in order to compile the `std::filesystem` library that CNRoom uses.
 
 **Library vocabulary**
 
-I use the arrangement metaphor, you can imagine a room (base directory) with several drawers (files), inside these drawers you can tidy up papers (keys) with informations written on (values). 
+I use the arrangement metaphor, you can imagine a room (base directory) with several drawers (files), inside these drawers you can tidy up papers (keys) with informations written on them (values). 
+CNRoom lets you assign several values of different types (std::string, int, double, bool) to a string called key and will write these values on a file of your choice (values are indexed in the order you write them). You can access to these values by the key.
 
 **Example code**
 
-An example/tutorial code showing how CNRoom is easy to use!
+A tutorial example code showing how CNRoom is easy to use!
 ```cpp
 //CNRoom
 #include "CNRoom/Room.hpp"
