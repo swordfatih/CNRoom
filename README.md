@@ -113,6 +113,6 @@ Class & members | Description
 
 **Performances**
 
-Can write and read keys of 5 values in a rate of 100 keys per second with my poor Toshiba DT01ACA100.
+Can write and read keys of 5 values in a rate of 120 keys per second with my poor Toshiba DT01ACA100.
 
 
