@@ -54,7 +54,6 @@ int main()
             //Show method 2: Visit
             std::visit([](auto const& value){ std::cout << value << ' '; }, it);
         }
-
     }, true);
 
     room.destroy("lebgdu92.hkn"); ///< Delete a file
