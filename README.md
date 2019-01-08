@@ -10,8 +10,8 @@ CNRoom is header-only, you just need a compiler that supports C++17 (`std::files
 
 **Library vocabulary**
 
-I use the arrangement metaphor, you can imagine a room (base directory) with several drawers (files), inside these drawers you can tidy up papers (keys) with informations written on them (values). 
-CNRoom lets you assign several values of different types (std::string, int, double, bool) to a string called key and will write these values on a file of your choice (values are indexed in the order you write them). You can access to these values by the key.
+I use the arrangement metaphor, you can imagine a room (base directory) with several drawers (file), inside these drawers you can tidy up papers (key) with informations written on them (values). 
+CNRoom lets you assign several values of different types (`std::string`, `int`, `double`, `bool`) to a string called key and will write these values on a file of your choice (values are indexed in the order you write them). You can access to these values by the key.
 
 **Example code**
 
