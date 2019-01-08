@@ -56,6 +56,19 @@ struct Key
     std::string name;
     std::vector<Types> values;
 
+    ///////////////////////////////////////////////////////////
+    /// Overload of operator [] to retreive a value by index
+    ///
+    /// \param index Index of the value
+    ///
+    /// \return Value
+    ///
+    ////////////////////////////////////////////////////////////
+    Types&      operator [](const size_t& index)
+    {
+        return values[index];
+    }
+
     ////////////////////////////////////////////////////////////
     /// \brief Convert value to string
     ///
@@ -64,7 +77,7 @@ struct Key
     /// \return Converted value
     ///
     ////////////////////////////////////////////////////////////
-    std::string string(const Types& value) const
+    static std::string string(const Types& value)
     {
         std::string converted;
 
@@ -187,7 +200,7 @@ public:
     }
 
     ///////////////////////////////////////////////////////////
-    /// Overload of operator >> to access internal key
+    /// Overload of operator () to access internal key
     ///
     /// \return Internal key
     ///
@@ -235,7 +248,7 @@ public:
 
             for(size_t i = 0; i < key.values.size(); ++i)
             {
-                std::holds_alternative<std::string>(key.values[i]) ? mStream << '\"' << key.string(key.values[i]) << '\"' : mStream << key.string(key.values[i]);
+                std::holds_alternative<std::string>(key.values[i]) ? mStream << '\"' << Key::string(key.values[i]) << '\"' : mStream << Key::string(key.values[i]);
 
                 if(i != key.values.size() - 1)
                 {
@@ -541,24 +554,6 @@ public:
         stream >> name;
 
         return stream();
-    }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Short way to retrieve a value from a key in a
-    /// drawer with its index
-    ///
-    /// \param file Path to the file, must exist
-    /// \param name Name of the key holding the value
-    /// \param index Index of the value to retrieve
-    ///
-    ////////////////////////////////////////////////////////////
-    Types   quick_value(const std::filesystem::path& file, const std::string& name, const size_t& index = 0)
-    {
-        Stream stream(mBase / file);
-
-        stream >> name;
-
-        return stream().values[index];
     }
 
 protected:
