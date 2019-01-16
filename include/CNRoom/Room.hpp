@@ -42,7 +42,73 @@ namespace CNRoom
 {
 
 ////////////////////////////////////////////////////////////
-using Types = std::variant<std::string, int, double, bool>; ///< Value types
+/// \brief Class inheriting from std::variant and internally
+/// converting const char* to std::string if needed
+///
+////////////////////////////////////////////////////////////
+template <typename Type, typename... Types>
+class Variant : public std::variant<Type, Types ...>
+{
+public:
+    using std::variant<Type, Types ...>::variant;
+    using std::variant<Type, Types ...>::operator=;
+
+    ///////////////////////////////////////////////////////////
+    /// \brief Check if T is same as one of the types in the parameter
+    /// pack
+    ///
+    /// \return Value
+    ///
+    ////////////////////////////////////////////////////////////
+    template<typename T, typename... Ts>
+    static constexpr bool contains()
+    {
+        return std::disjunction_v<std::is_same<T, Ts>...>;
+    }
+
+    ///////////////////////////////////////////////////////////
+    /// \brief Overload of operator = to convert const char* to
+    /// std::string if needed before assigning
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Variant& operator =(const char* character)
+    {
+        if constexpr(!contains<const char*, Type, Types...>() && contains<std::string, Type, Types...>())
+        {
+            std::variant<Type, Types ...>::operator=(std::string(character));
+        }
+        else
+        {
+            std::variant<Type, Types ...>::operator=(character);
+        }
+
+        return *this;
+    }
+
+    ///////////////////////////////////////////////////////////
+    /// \brief Constructor that converts const char* to
+    /// std::string if needed before assigning
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Variant(const char* character) : std::variant<Type, Types...>()
+    {
+        *this = character;
+    }
+
+    ///////////////////////////////////////////////////////////
+    /// \brief Convert to the standard variant
+    ///
+    /// \return Standard variant
+    ///
+    ////////////////////////////////////////////////////////////
+    std::variant<Type, Types ...> standard() const
+    {
+        return std::variant<Type, Types ...>(*this);
+    }
+};
+
+////////////////////////////////////////////////////////////
+using Types = Variant<std::string, int, double, bool>; ///< Value types
 
 ////////////////////////////////////////////////////////////
 /// \brief Struct that represents a key
@@ -57,7 +123,7 @@ struct Key
     std::vector<Types> values;
 
     ///////////////////////////////////////////////////////////
-    /// Overload of operator [] to retreive a value by index
+    /// \brief Overload of operator [] to retreive a value by index
     ///
     /// \param index Index of the value
     ///
@@ -180,7 +246,7 @@ public:
     }
 
     ///////////////////////////////////////////////////////////
-    /// Overload of operator << to write to the file
+    /// \brief Overload of operator << to write to the file
     ///
     ////////////////////////////////////////////////////////////
     Stream&     operator <<(Key key)
@@ -190,7 +256,7 @@ public:
     }
 
     ///////////////////////////////////////////////////////////
-    /// Overload of operator >> to read from a file
+    /// \brief Overload of operator >> to read from a file
     ///
     ////////////////////////////////////////////////////////////
     Stream&     operator >>(const std::string& name)
@@ -200,7 +266,7 @@ public:
     }
 
     ///////////////////////////////////////////////////////////
-    /// Overload of operator () to access internal key
+    /// \brief Overload of operator () to access internal key
     ///
     /// \return Internal key
     ///
