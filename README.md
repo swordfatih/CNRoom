@@ -111,6 +111,7 @@ Class & members | Description
 `Room` | Stream wrapper class.
 `Room::connect(path)` | Set the base directory. Optional, current path by default. 
 `Room::open(file, function)` | Opens a file and call the given function.
+`Room::exists(file)` | Check if the given file exists.
 `Room::destroy(file)` | Delete a file.
 `Room::quick_write(file, key)` | Short way to write a key.
 `Room::quick_read(file, name)` | Short way to read a key.
