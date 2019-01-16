@@ -81,11 +81,6 @@ Sword of the Warrior 0 4.85 0 4.850000
 
 Struct and classes provided in `CNRoom/Room.hpp`. 
 
-Class & members | Description
-------- | -----------
-`Variant` | Class inheriting from std::variant and internally converting const char* to std::string if needed.
-`Variant::standard()` | Convert to standard `std::variant` to visit.
-
 Struct & members | Description
 ------- | -----------
 `Key` | Struct that represents a key with a name and a vector of values.
