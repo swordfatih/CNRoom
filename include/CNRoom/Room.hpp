@@ -573,6 +573,26 @@ public:
     }
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check if file exists
+    ///
+    /// \param file Path to the file
+    ///
+    /// \return True if file exists
+    ///
+    ////////////////////////////////////////////////////////////
+    bool    exists(const std::filesystem::path& file)
+    {
+        if(std::filesystem::exists(mBase / file))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destroy a file or directory
     ///
     /// \param file Path to the file
