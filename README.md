@@ -25,13 +25,11 @@ A tutorial example code showing how easy CNRoom is to use!
 
 int main()
 {
-    using namespace std::string_literals; ///< String literals (operator""s)
-
     /// Stream class
     ////////////////////////////////////////////////////////////
     CNRoom::Stream stream("database/lebgdu92.hkn", true); ///< Open a file, create new if doesn't exist
 
-    stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com"s, true}}; ///< Write using <<
+    stream << CNRoom::Key{"mail", {"lebgdu92@gmail.com", true}}; ///< Write using <<
     stream >> "mail"; ///< Read using >>
 
     //Show method 1: std::get<Type>
@@ -47,12 +45,12 @@ int main()
 
     room.open("lebgdu92.hkn", [](auto& stream) ///< Open a file
     {
-        stream.write({"sword", {"Sword of the Warrior"s, false, 4.85, 0}}); ///< Write using function write()
+        stream.write({"sword", {"Sword of the Warrior", false, 4.85, 0}}); ///< Write using function write()
 
         for(const auto& it: stream.read("sword").values) ///< Read using function read()
         {
             //Show method 2: Visit
-            std::visit([](auto const& value){ std::cout << value << ' '; }, it);
+            std::visit([](auto const& value){ std::cout << value << ' '; }, it.standard());
         }
     }, true);
 
@@ -60,7 +58,7 @@ int main()
 
     /// Shortcut functions
     ////////////////////////////////////////////////////////////
-    room.quick_write("lebgdu92.hkn", {"sword", {"Sword of the Warrior"s, false, 4.85, 0}});
+    room.quick_write("lebgdu92.hkn", {"sword", {"Sword of the Warrior", false, 4.85, 0}});
 
     //Show method 3: Convert to string using Key::string()
     std::cout << CNRoom::Key::string(room.quick_read("lebgdu92.hkn", "sword")[2]) << std::endl;
@@ -82,6 +80,11 @@ Sword of the Warrior 0 4.85 0 4.850000
 **Documentation**
 
 Struct and classes provided in `CNRoom/Room.hpp`. 
+
+Class & members | Description
+------- | -----------
+`Variant` | Class inheriting from std::variant and internally converting const char* to std::string if needed.
+`Variant::standard()` | Convert to standard `std::variant` to visit.
 
 Struct & members | Description
 ------- | -----------
