@@ -102,6 +102,7 @@ Class & members | Description
 `Stream::operator<<` | Write a key.
 `Stream::read(name)` | Read a key by name.
 `Stream::operator>>` | Read a key by name.
+`Stream::remove(name)` | Remove a key.
 
 Some helper functions are provided in the Room class.
 
