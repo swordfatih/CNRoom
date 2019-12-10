@@ -225,7 +225,22 @@ public:
             if(create)
             {
                 std::ofstream writer(file);
-                writer.close();
+
+                if(!writer && file.string().size() > file.filename().string().size())
+                {
+                    std::filesystem::create_directories(file.string().substr(0, file.string().size() - file.filename().string().size()));
+                    writer.open(file);
+                }
+
+                if(writer)
+                {
+                    writer.close();
+                }
+                else
+                {
+                    exists = false;
+                    throw std::runtime_error("Stream failed to create file on \"" + file.string() + "\"");
+                }
             }
             else
             {
