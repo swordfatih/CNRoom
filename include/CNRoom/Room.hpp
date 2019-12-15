@@ -620,7 +620,7 @@ public:
     {
         if(std::filesystem::exists(mBase / file))
         {
-            std::filesystem::remove_all(file);
+            std::filesystem::remove_all(mBase / file);
         }
         else
         {
